@@ -21,12 +21,18 @@
             <tbody>
                 @foreach($templates as $template)
                 <tr>
-                    <td>{{ $template->name }}</td>
-                    <td>{{ $template->description }}</td>
+                    <td>{{ $template['name'] }}</td>
+                    <td>{{ $template['description'] }}</td>
                     <td>
-                        <form method="POST" action="{{ route('admin.servers.templates.create', ['egg' => $template->id]) }}">
+                        <form method="POST" action="{{ route('admin.servers.templates.create', ['egg' => $template['id']]) }}">
                             @csrf
-                            <button type="submit" class="btn btn-success btn-sm">このテンプレートでサーバー作成</button>
+                            <select name="owner_id" class="form-control" required>
+                                <option value="">オーナー選択</option>
+                                @foreach($owners as $owner)
+                                    <option value="{{ $owner->id }}">{{ $owner->name }} ({{ $owner->email }})</option>
+                                @endforeach
+                            </select>
+                            <button type="submit" class="btn btn-success btn-sm" style="margin-top:5px;">このテンプレートでサーバー作成</button>
                         </form>
                     </td>
                 </tr>

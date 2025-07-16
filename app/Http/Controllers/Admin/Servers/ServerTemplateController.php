@@ -25,12 +25,34 @@ class ServerTemplateController extends Controller
      *
      * @return \Illuminate\View\View
      */
-    public function index(Request $request): View
+public function index(Request $request): View
     {
-        $templates = \Pterodactyl\Models\ServerTemplate::all();
+        // ハードコードされたテンプレートデータ
+        $templates = [
+            [
+                'id' => 1,
+                'name' => 'Minecraft',
+                'description' => 'Minecraft サーバーテンプレート',
+                'memory' => 2048,
+                'disk' => 10240,
+                'cpu' => 200,
+            ],
+            [
+                'id' => 2,
+                'name' => 'Rust',
+                'description' => 'Rust サーバーテンプレート',
+                'memory' => 4096,
+                'disk' => 20480,
+                'cpu' => 300,
+            ],
+        ];
+
+        // オーナー一覧
+        $owners = \Pterodactyl\Models\User::all();
 
         return view('admin.servers.templates.index', [
             'templates' => $templates,
+            'owners' => $owners,
         ]);
     }
 
@@ -42,39 +64,33 @@ class ServerTemplateController extends Controller
      */
     public function create(Request $request): RedirectResponse
     {
-        $templateId = $request->input('egg');
-        $template = \Pterodactyl\Models\ServerTemplate::findOrFail($templateId);
+        $eggId = $request->input('egg');
+        $ownerId = $request->input('owner_id');
+        $egg = Egg::findOrFail($eggId);
 
-        $egg = Egg::findOrFail($template->egg_id);
-
+        // 必要なパラメータを取得（例: location_id, node_id, name）
         $location = Location::first();
         $node = Node::first();
 
-        // configから値を取得（なければデフォルト）
-        $config = $template->config ?? [];
-        $memory = $config['memory'] ?? 1024;
-        $disk = $config['disk'] ?? 10240;
-        $cpu = $config['cpu'] ?? 100;
-
-        // 空いているポートをランダムで割り当て
-        $allocationId = $this->getRandomAvailableAllocationId($node);
+        // 空いているポートからランダムに選択
+        $allocation = \Pterodactyl\Models\Allocation::whereNull('server_id')->inRandomOrder()->first();
 
         $data = [
-            'name' => $template->name . '-' . date('YmdHis'),
-            'owner_id' => 1,
+            'name' => $egg->name . '-' . date('YmdHis'),
+            'owner_id' => $ownerId,
             'egg_id' => $egg->id,
             'nest_id' => $egg->nest_id,
             'node_id' => $node ? $node->id : null,
             'location_id' => $location ? $location->id : null,
-            'memory' => $memory,
-            'disk' => $disk,
-            'cpu' => $cpu,
+            'memory' => 1024,
+            'disk' => 10240,
+            'cpu' => 100,
             'swap' => 0,
             'io' => 500,
             'startup' => $egg->startup,
             'image' => $egg->docker_image,
             'environment' => [],
-            'allocation_id' => $allocationId,
+            'allocation_id' => $allocation ? $allocation->id : null,
             'start_on_completion' => true,
         ];
 
@@ -83,16 +99,5 @@ class ServerTemplateController extends Controller
         $this->alert->success('サーバーがテンプレートから作成されました')->flash();
 
         return redirect('/admin/servers/view/' . $server->id);
-    }
-
-    /**
-     * 空いているポートをランダムで取得
-     */
-    private function getRandomAvailableAllocationId($node)
-    {
-        if (!$node) return null;
-        $allocations = $node->allocations()->where('server_id', null)->get();
-        if ($allocations->isEmpty()) return null;
-        return $allocations->random()->id;
     }
 }
