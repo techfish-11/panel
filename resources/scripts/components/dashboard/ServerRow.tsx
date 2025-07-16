@@ -11,8 +11,7 @@ import Spinner from '@/components/elements/Spinner';
 import styled from 'styled-components/macro';
 import isEqual from 'react-fast-compare';
 
-// Determines if the current value is in an alarm threshold so we can show it in red rather
-// than the more faded default style.
+// 現在の値がアラームの閾値内にあるかどうかを判断し、デフォルトのフェードアウトしたスタイルではなく赤で表示できるようにします。
 const isAlarmState = (current: number, limit: number): boolean => limit > 0 && current / (limit * 1024 * 1024) >= 0.9;
 
 const Icon = memo(
@@ -64,8 +63,7 @@ export default ({ server, className }: { server: Server; className?: string }) =
     }, [stats?.isSuspended, server.status]);
 
     useEffect(() => {
-        // Don't waste a HTTP request if there is nothing important to show to the user because
-        // the server is suspended.
+        // サーバーが中断されている場合、ユーザーに重要な情報が表示されないため、HTTPリクエストを無駄にしません。
         if (isSuspended) return;
 
         getStats().then(() => {
@@ -84,9 +82,9 @@ export default ({ server, className }: { server: Server; className?: string }) =
         alarms.disk = server.limits.disk === 0 ? false : isAlarmState(stats.diskUsageInBytes, server.limits.disk);
     }
 
-    const diskLimit = server.limits.disk !== 0 ? bytesToString(mbToBytes(server.limits.disk)) : 'Unlimited';
-    const memoryLimit = server.limits.memory !== 0 ? bytesToString(mbToBytes(server.limits.memory)) : 'Unlimited';
-    const cpuLimit = server.limits.cpu !== 0 ? server.limits.cpu + ' %' : 'Unlimited';
+    const diskLimit = server.limits.disk !== 0 ? bytesToString(mbToBytes(server.limits.disk)) : '無制限';
+    const memoryLimit = server.limits.memory !== 0 ? bytesToString(mbToBytes(server.limits.memory)) : '無制限';
+    const cpuLimit = server.limits.cpu !== 0 ? server.limits.cpu + ' %' : '無制限';
 
     return (
         <StatusIndicatorBox as={Link} to={`/server/${server.id}`} className={className} $status={stats?.status}>
@@ -120,19 +118,19 @@ export default ({ server, className }: { server: Server; className?: string }) =
                     isSuspended ? (
                         <div css={tw`flex-1 text-center`}>
                             <span css={tw`bg-red-500 rounded px-2 py-1 text-red-100 text-xs`}>
-                                {server.status === 'suspended' ? 'Suspended' : 'Connection Error'}
+                                {server.status === 'suspended' ? '中断' : '接続エラー'}
                             </span>
                         </div>
                     ) : server.isTransferring || server.status ? (
                         <div css={tw`flex-1 text-center`}>
                             <span css={tw`bg-neutral-500 rounded px-2 py-1 text-neutral-100 text-xs`}>
                                 {server.isTransferring
-                                    ? 'Transferring'
+                                    ? '転送中'
                                     : server.status === 'installing'
-                                    ? 'Installing'
+                                    ? 'インストール中'
                                     : server.status === 'restoring_backup'
-                                    ? 'Restoring Backup'
-                                    : 'Unavailable'}
+                                    ? 'バックアップ復元中'
+                                    : '利用不可'}
                             </span>
                         </div>
                     ) : (
@@ -147,7 +145,7 @@ export default ({ server, className }: { server: Server; className?: string }) =
                                     {stats.cpuUsagePercent.toFixed(2)} %
                                 </IconDescription>
                             </div>
-                            <p css={tw`text-xs text-neutral-600 text-center mt-1`}>of {cpuLimit}</p>
+                            <p css={tw`text-xs text-neutral-600 text-center mt-1`}>/{cpuLimit}</p>
                         </div>
                         <div css={tw`flex-1 ml-4 sm:block hidden`}>
                             <div css={tw`flex justify-center`}>
@@ -156,7 +154,7 @@ export default ({ server, className }: { server: Server; className?: string }) =
                                     {bytesToString(stats.memoryUsageInBytes)}
                                 </IconDescription>
                             </div>
-                            <p css={tw`text-xs text-neutral-600 text-center mt-1`}>of {memoryLimit}</p>
+                            <p css={tw`text-xs text-neutral-600 text-center mt-1`}>/{memoryLimit}</p>
                         </div>
                         <div css={tw`flex-1 ml-4 sm:block hidden`}>
                             <div css={tw`flex justify-center`}>
@@ -165,7 +163,7 @@ export default ({ server, className }: { server: Server; className?: string }) =
                                     {bytesToString(stats.diskUsageInBytes)}
                                 </IconDescription>
                             </div>
-                            <p css={tw`text-xs text-neutral-600 text-center mt-1`}>of {diskLimit}</p>
+                            <p css={tw`text-xs text-neutral-600 text-center mt-1`}>/{diskLimit}</p>
                         </div>
                     </React.Fragment>
                 )}

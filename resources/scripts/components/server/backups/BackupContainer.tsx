@@ -33,7 +33,7 @@ const BackupContainer = () => {
     }
 
     return (
-        <ServerContentBlock title={'Backups'}>
+        <ServerContentBlock title={'バックアップ'}>
             <FlashMessageRender byKey={'backups'} css={tw`mb-4`} />
             <Pagination data={backups} onPageSelect={setPage}>
                 {({ items }) =>
@@ -43,8 +43,8 @@ const BackupContainer = () => {
                         !backupLimit ? null : (
                             <p css={tw`text-center text-sm text-neutral-300`}>
                                 {page > 1
-                                    ? "Looks like we've run out of backups to show you, try going back a page."
-                                    : 'It looks like there are no backups currently stored for this server.'}
+                                    ? '表示できるバックアップはなくなったようです。前のページに戻ってみてください。'
+                                    : 'このサーバーには現在保存されているバックアップはありません。'}
                             </p>
                         )
                     ) : (
@@ -56,14 +56,14 @@ const BackupContainer = () => {
             </Pagination>
             {backupLimit === 0 && (
                 <p css={tw`text-center text-sm text-neutral-300`}>
-                    Backups cannot be created for this server because the backup limit is set to 0.
+                    バックアップ制限が0に設定されているため、このサーバーのバックアップを作成できません。
                 </p>
             )}
             <Can action={'backup.create'}>
                 <div css={tw`mt-6 sm:flex items-center justify-end`}>
                     {backupLimit > 0 && backups.backupCount > 0 && (
                         <p css={tw`text-sm text-neutral-300 mb-4 sm:mr-6 sm:mb-0`}>
-                            {backups.backupCount} of {backupLimit} backups have been created for this server.
+                            このサーバーには {backupLimit} 個中 {backups.backupCount} 個のバックアップが作成されています。
                         </p>
                     )}
                     {backupLimit > 0 && backupLimit > backups.backupCount && (

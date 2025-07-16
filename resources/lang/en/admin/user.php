@@ -2,10 +2,10 @@
 
 return [
     'exceptions' => [
-        'user_has_servers' => 'Cannot delete a user with active servers attached to their account. Please delete their servers before continuing.',
+        'user_has_servers' => 'アカウントにアクティブなサーバーが紐づいているユーザーは削除できません。続行する前に、そのユーザーのサーバーを削除してください。',
     ],
     'notices' => [
-        'account_created' => 'Account has been created successfully.',
-        'account_updated' => 'Account has been successfully updated.',
+        'account_created' => 'アカウントが正常に作成されました。',
+        'account_updated' => 'アカウントが正常に更新されました。',
     ],
 ];

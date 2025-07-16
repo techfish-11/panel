@@ -3,17 +3,16 @@
 return [
     /*
     |--------------------------------------------------------------------------
-    | Password Reset Language Lines
+    | パスワードリセット言語設定
     |--------------------------------------------------------------------------
     |
-    | The following language lines are the default lines which match reasons
-    | that are given by the password broker for a password update attempt
-    | has failed, such as for an invalid token or invalid new password.
+    | 以下の言語設定は、無効なトークンや無効な新しいパスワードなど、
+    | パスワード更新の試行が失敗した理由に対応するデフォルトの行です。
     |
     */
-    'password' => 'Passwords must be at least six characters and match the confirmation.',
-    'reset' => 'Your password has been reset!',
-    'sent' => 'We have e-mailed your password reset link!',
-    'token' => 'This password reset token is invalid.',
-    'user' => "We can't find a user with that e-mail address.",
+    'password' => 'パスワードは最低限の文字数があり、確認用と一致している必要があります。',
+    'reset' => 'パスワードがリセットされました！',
+    'sent' => 'パスワードリセットリンクをメールで送信しました！',
+    'token' => 'このパスワードリセットトークンは無効です。',
+    'user' => "そのメールアドレスのユーザーは見つかりませんでした。",
 ];
